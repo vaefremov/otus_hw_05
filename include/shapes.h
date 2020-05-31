@@ -22,16 +22,16 @@ namespace OTUS
         virtual ~BaseShape() = default;
         virtual DPoint<> coords() const noexcept = 0;
         virtual void accept(IDrawVisitor * ) const = 0;
-        virtual Colour colour() const
+        virtual Colour colour() const noexcept
         {
             return m_colour;
         }
-        virtual void setColour(Colour c)
+        virtual void setColour(Colour c) noexcept
         {
             m_colour = c;
         }
         protected:
-        Colour m_colour;
+        Colour m_colour = Colour::BLACK;
     };
 
     class Point: public BaseShape

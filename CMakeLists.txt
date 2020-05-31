@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
-add_library(utilities src/utilities.cpp)
+add_library(utilities src/utilities.cpp src/controller.cpp src/model.cpp src/ostream_view.cpp)
 target_include_directories(utilities
     PRIVATE "${CMAKE_BINARY_DIR}"
     "include"
@@ -45,9 +45,41 @@ target_link_libraries(test_model
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+add_executable(test_controller tests/test_controller.cpp)
+target_include_directories(test_controller
+    PRIVATE 
+    "include"
+    "src"
+    "${CMAKE_BINARY_DIR}" "${CMAKE_HOME_DIRECTORY}"
+    "${GTEST_INCLUDE_DIR}"
+)
+target_link_libraries(test_controller
+    utilities
+    ${GTEST_LIBRARIES}
+    ${GTEST_MAIN_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+add_executable(test_view tests/test_view.cpp)
+target_include_directories(test_view
+    PRIVATE 
+    "include"
+    "src"
+    "${CMAKE_BINARY_DIR}" "${CMAKE_HOME_DIRECTORY}"
+    "${GTEST_INCLUDE_DIR}"
+)
+target_link_libraries(test_view
+    utilities
+    ${GTEST_LIBRARIES}
+    ${GTEST_MAIN_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
 
 enable_testing()
 add_test(test_model bin/test_model)
+add_test(test_controller bin/test_controller)
+add_test(test_view bin/test_view)
 
 install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION bin)
 

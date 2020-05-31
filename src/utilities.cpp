@@ -1,7 +1,8 @@
 #include <string>
 #include "utilities.h"
 
-std::string OTUS::version()
+std::ostream& OTUS::operator<<(std::ostream& out, OTUS::Colour c)
 {
-    return "0.0.42";
+    out << ColourName(c);
+    return out;
 }

@@ -3,7 +3,7 @@
 #include <map>
 #include <list>
 #include <memory>
-
+#include <algorithm>
 #include "shapes.h"
 
 namespace OTUS
@@ -47,39 +47,40 @@ private:
     std::list<std::weak_ptr<IObserver>> m_subscribers;
 };
 
+using ModelID = BaseShape const*;
 
 class Model: public BaseObservable
 {
     public:
     Model() = default;
     ~Model() = default;
-    Point const* createPoint(DPoint<> const& pt)
+    ModelID createPoint(DPoint<> const& pt)
     {
         auto pt_ptr = new Point(pt);
         std::unique_ptr<BaseShape> up(pt_ptr);
 
-        // auto p = std::pair<size_t, std::unique_ptr<BaseShape>>(m_id++, up);
-        // // m_elements.emplace(p);
-        // m_elements[m_id++] = up;
         m_elements.emplace_back(std::move(up));
         notify();
         return pt_ptr;
     }
-    Line const* createLine(DPoint<> const& start, DPoint<> const& end)
+    ModelID createLine(DPoint<> const& start, DPoint<> const& end)
     {
         auto pt_ptr = new Line(start, end);
         std::unique_ptr<BaseShape> up(pt_ptr);
-        // auto p = std::pair<size_t, std::unique_ptr<BaseShape>>(m_id++, pt_line);
-        // m_elements.emplace(p);
-        // m_elements[++m_id] = pt_ptr;
-        // m_elements.emplace_back(pt_ptr);
         m_elements.emplace_back(std::move(up));
         notify();
         return pt_ptr;
     }
-    void setColourById(size_t id, Colour c)
+    void setColourById(ModelID id, Colour c)
     {
-        m_elements[id]->setColour(c);
+        auto shp = findByID(id);
+        shp->setColour(c);
+        notify();
+    }
+
+    void deleteByID(ModelID id)
+    {
+        m_elements.remove_if([id](auto& e){return e.get() == id;});
         notify();
     }
 
@@ -90,12 +91,25 @@ class Model: public BaseObservable
             e->accept(visitor);
         }
     }
-    
+    /**
+     *  Find all the IDs of the objects that are designated by the given point.
+     * 
+     * Currently, the collision occurs of the coordinates of an object (central point)
+     * are near the point specified by the parameter \param pt.
+     */
+    std::vector<ModelID> findCollisions(DPoint<> const& pt);
+
+    /**
+     * Return size of the model (i.e. the total number of shapes mentionned in the model).
+     */ 
+    size_t size()
+    {
+        return m_elements.size();
+    }
+
     private:
-    size_t m_id = 0;
-    std::vector<std::unique_ptr<BaseShape>> m_elements;
-    // std::map<size_t, std::unique_ptr<BaseShape>> m_elements;
-    // std::map<size_t, BaseShape*> m_elements;
+    std::list<std::unique_ptr<BaseShape>> m_elements;
+    BaseShape* findByID(ModelID id);
 
 };
 
