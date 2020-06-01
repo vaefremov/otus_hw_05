@@ -16,7 +16,7 @@ template<typename T = double, typename = std::enable_if_t<std::is_floating_point
 class DPoint final
 {
     public:
-    DPoint() = default;
+    DPoint() = delete;
     ~DPoint() = default;
     explicit DPoint(T const& x, T const& y) noexcept
     {
@@ -32,6 +32,14 @@ class DPoint final
     {
         return m_y;
     }
+    /**
+     * Method to find if the \param other is near the current point with the
+     * specified accuracy.
+     * 
+     * Currently, the default accuracy is the machine epsilon, which is wrong:
+     * we should scale the accuracy to the max magnitude of the points. The current 
+     * implementation may require setting the accuracy by hand.
+     */
     bool isNear(DPoint const& other, T acc = std::numeric_limits<T>::epsilon())
     {
         return (std::fabs(m_x - other.m_x) <= acc) && (std::fabs(m_y - other.m_y) <= acc);

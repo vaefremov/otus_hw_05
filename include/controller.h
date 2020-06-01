@@ -27,7 +27,7 @@ class BaseController
     protected:
     Model* m_model;
     ControllerState m_state = ControllerState::DEFAULT;
-    DPoint<> m_prevPoint;
+    DPoint<> m_prevPoint{0., 0.};
 };
     
 } // namespace OTUS
