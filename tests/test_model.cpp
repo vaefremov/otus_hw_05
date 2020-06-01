@@ -64,3 +64,13 @@ TEST(model, collisions)
     auto coll3 = m.findCollisions(OTUS::DPoint<>(1.5, 1.5));
     ASSERT_EQ(1, coll3.size());
 }
+
+TEST(model, create_shape)
+{
+    OTUS::Model m;
+    auto id1 = m.createShape<OTUS::Point>(OTUS::DPoint<>(1., 2.));
+    ASSERT_EQ(1, m.size());
+    m.deleteByID(id1);
+    ASSERT_EQ(0, m.size());
+
+}

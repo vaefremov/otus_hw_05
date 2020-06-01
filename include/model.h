@@ -54,23 +54,27 @@ class Model: public BaseObservable
     public:
     Model() = default;
     ~Model() = default;
+
     ModelID createPoint(DPoint<> const& pt)
     {
-        auto pt_ptr = new Point(pt);
-        std::unique_ptr<BaseShape> up(pt_ptr);
-
-        m_elements.emplace_back(std::move(up));
-        notify();
-        return pt_ptr;
+        return createShape<Point>(pt);
     }
+
     ModelID createLine(DPoint<> const& start, DPoint<> const& end)
     {
-        auto pt_ptr = new Line(start, end);
-        std::unique_ptr<BaseShape> up(pt_ptr);
-        m_elements.emplace_back(std::move(up));
-        notify();
-        return pt_ptr;
+        return createShape<Line>(start, end);
     }
+
+    template<typename S, typename... Args>
+    ModelID createShape(Args&&... args)
+    {
+        auto pt_ptr = std::make_unique<S>(std::forward<Args>(args)...);
+        auto id = pt_ptr.get();
+        m_elements.emplace_back(std::move(pt_ptr));
+        notify();
+        return id;
+    }
+    
     void setColourById(ModelID id, Colour c)
     {
         auto shp = findByID(id);
@@ -80,7 +84,7 @@ class Model: public BaseObservable
 
     void deleteByID(ModelID id)
     {
-        m_elements.remove_if([id](auto& e){return e.get() == id;});
+        m_elements.remove_if([id](auto& e){return  e.get() == id;});
         notify();
     }
 
