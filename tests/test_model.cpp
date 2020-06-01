@@ -7,7 +7,7 @@ TEST(utilities, point)
 {   
     double exp_x = 1.;
     double exp_y = 2.;
-    OTUS::DPoint<double> p{1, 2};
+    OTUS::DPoint<double> p{exp_x, exp_y};
 
     ASSERT_DOUBLE_EQ(exp_x, p.x());
     ASSERT_DOUBLE_EQ(exp_y, p.y());
@@ -19,6 +19,12 @@ TEST(utilities, point)
     OTUS::DPoint<> p3{1, 2};
     ASSERT_DOUBLE_EQ(exp_x, p3.x());
     ASSERT_DOUBLE_EQ(exp_y, p3.y());
+
+    OTUS::DPoint<> p4{0, 0};
+    // Testing that the operator= works;
+    p4 = p3;
+    ASSERT_DOUBLE_EQ(exp_x, p4.x());
+    ASSERT_DOUBLE_EQ(exp_y, p4.y());
 }
 
 TEST(utilities, is_near)
