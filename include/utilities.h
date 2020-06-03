@@ -60,6 +60,10 @@ enum class Colour
     BLACK, RED, GREEN, BLUE, WHITE
 };
 
+/**
+ * No simple method of converting enums to std::string or char const* found, so
+ * we have to do this "by hand".
+ */
 constexpr char const* ColourName(Colour c)
 {
     switch (c)
@@ -84,6 +88,10 @@ constexpr char const* ColourName(Colour c)
     }
 }
 
+/**
+ * Utility operator used to output instances of OTUS::Color to ostream,
+ * uses ColourName for that purpose.
+ */
 std::ostream& operator<<(std::ostream& out, Colour c);
 
 }
